@@ -1,0 +1,1 @@
+"""Normal-reference visual inspection."""
