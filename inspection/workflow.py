@@ -25,14 +25,25 @@ def write_json(path: Path, value: dict):
 
 def fit(root: Path, output: Path, limit=16, seed=42, size=224, method="baseline") -> dict:
     validate_size(size)
-    if method != "baseline":
+    if not 0 <= seed < 2 ** 32:
+        raise ValueError("Seed must be between zero and 2**32 - 1.")
+    if method not in {"baseline", "patchcore"}:
         raise ValueError(f"Unknown method: {method}")
     paths = select_references(root, limit, seed)
     if output.exists() and any(output.iterdir()):
         raise ValueError("Model output directory must be empty; choose a new directory.")
-    model = PixelTemplate(size).fit(paths)
+    if method == "baseline":
+        model = PixelTemplate(size).fit(paths)
+        filename = "model.npz"
+        parameters = {"std_floor": model.std_floor, "smoothing_sigma": 2, "score_quantile": 0.99}
+    else:
+        from inspection.patchcore import PatchCoreDetector
+
+        model = PatchCoreDetector(size).fit(paths, seed=seed)
+        filename = "model.pt"
+        parameters = model.parameters
     output.mkdir(parents=True, exist_ok=True)
-    checkpoint = output / "model.npz"
+    checkpoint = output / filename
     model.save(checkpoint)
     metadata = {
         "schema_version": 1,
@@ -45,7 +56,7 @@ def fit(root: Path, output: Path, limit=16, seed=42, size=224, method="baseline"
         "fitted_at": datetime.now(timezone.utc).isoformat(),
         "checkpoint": checkpoint.name,
         "checkpoint_sha256": file_digest(checkpoint),
-        "parameters": {"std_floor": model.std_floor, "smoothing_sigma": 2, "score_quantile": 0.99},
+        "parameters": parameters,
     }
     write_json(output / "metadata.json", metadata)
     return metadata
@@ -53,12 +64,20 @@ def fit(root: Path, output: Path, limit=16, seed=42, size=224, method="baseline"
 
 def predict(model_dir: Path, image: Path, output: Path) -> dict:
     metadata = json.loads((model_dir / "metadata.json").read_text(encoding="utf-8"))
-    if metadata.get("schema_version") != 1 or metadata.get("method") != "baseline":
+    if metadata.get("schema_version") != 1 or metadata.get("method") not in {"baseline", "patchcore"}:
         raise ValueError("Unsupported model metadata.")
-    checkpoint = model_dir / "model.npz"
+    method = metadata["method"]
+    checkpoint = model_dir / ("model.npz" if method == "baseline" else "model.pt")
     if metadata.get("checkpoint") != checkpoint.name or file_digest(checkpoint) != metadata["checkpoint_sha256"]:
         raise ValueError("Checkpoint integrity check failed.")
-    model = PixelTemplate.load(checkpoint)
+    if method == "baseline":
+        model = PixelTemplate.load(checkpoint)
+    else:
+        from inspection.patchcore import PatchCoreDetector
+
+        model = PatchCoreDetector.load(checkpoint)
+        if metadata["parameters"] != model.parameters:
+            raise ValueError("Metadata parameters do not match the checkpoint.")
     if metadata["image_size"] != model.size:
         raise ValueError("Metadata image size does not match the checkpoint.")
     score, anomaly_map = model.predict(image)

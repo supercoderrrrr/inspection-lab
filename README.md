@@ -3,8 +3,8 @@
 Normal-reference visual inspection, starting with a command-line workflow for MVTec AD.
 
 The command-line workflow validates a category, fits a normal-reference model and exports
-single-image scores. The first detector is a standardized pixel-template baseline for
-approximately aligned images.
+single-image scores. It includes a standardized pixel-template baseline and Anomalib
+PatchCore with frozen ImageNet-pretrained ResNet-18 features.
 
 ## Install
 
@@ -58,6 +58,40 @@ Prediction writes `prediction.json` and `anomaly_map.npy`. The image score is th
 percentile of smoothed, standardized RGB residuals. This baseline assumes a similar view
 and alignment. Raw scores are not probabilities; this stage has no calibrated pass/fail
 threshold or benchmark accuracy claim. Generated files are excluded from Git.
+
+## Fit PatchCore on CPU
+
+Install the CPU PyTorch wheels before the optional detector dependencies:
+
+```bash
+python -m pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -e ".[patchcore,dev]"
+python -m inspection fit --method patchcore --root data/mvtec_ad/bottle --limit 16 --output artifacts/patchcore
+python -m inspection predict --model artifacts/patchcore --image data/mvtec_ad/bottle/test/broken_large/000.png --output artifacts/patchcore-prediction
+```
+
+The first fit downloads pretrained features into `.cache/`; later prediction loads the
+saved weights without downloading them again. Fitting extracts layers 2 and 3, selects a
+1% coreset of reference patches and retains at least nine patches for nine-neighbor scoring.
+There is no gradient-based fine-tuning. Input images are resized to 224 pixels and normalized
+using ImageNet statistics. `--size`, `--limit` and `--seed` can change the fit configuration.
+
+PatchCore exports the same JSON/NumPy interface as the baseline. Its score uses feature
+distances, so the two methods' raw scores must not be compared as if they used the same
+scale. Both fit only normal training images. Threshold calibration, benchmark evaluation
+and a browser interface will follow in later stages.
+
+## Checks
+
+```bash
+python -m pytest -q
+python -m ruff check .
+```
+
+PatchCore tests use random features and synthetic images to check fitting, map dimensions
+and checkpoint round trips without downloading weights. They are skipped when the optional
+detector dependencies are absent. Real pretrained fitting is checked separately on the
+local bottle dataset; see [validation notes](docs/VALIDATION.md).
 
 ## Attribution
 

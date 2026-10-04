@@ -15,7 +15,7 @@ def main(argv=None):
     fitting = commands.add_parser("fit", help="Fit a model on normal references only")
     fitting.add_argument("--root", type=Path, required=True)
     fitting.add_argument("--output", type=Path, required=True)
-    fitting.add_argument("--method", choices=["baseline"], default="baseline")
+    fitting.add_argument("--method", choices=["baseline", "patchcore"], default="baseline")
     fitting.add_argument("--limit", type=int, default=16)
     fitting.add_argument("--seed", type=int, default=42)
     fitting.add_argument("--size", type=int, default=224)
@@ -35,6 +35,8 @@ def main(argv=None):
             from inspection.workflow import predict
 
             result = predict(args.model, args.image, args.output)
-    except (OSError, ValueError) as error:
+    except ImportError:
+        parser.exit(2, 'Error: Install PatchCore dependencies with pip install -e ".[patchcore]".\n')
+    except (OSError, ValueError, RuntimeError) as error:
         parser.exit(2, f"Error: {error}\n")
     print(json.dumps(result, indent=2))
