@@ -4,3 +4,5 @@
 *.toml text eol=lf
 *.json text eol=lf
 *.png binary
+# Keep hashed experiment evidence identical across platforms.
+results/** -text whitespace=cr-at-eol

@@ -10,6 +10,7 @@ from inspection.images import pixels, validate_size
 
 
 def create_model(pretrained=True):
+    torch.set_num_threads(min(torch.get_num_threads(), 8))
     cache = Path(__file__).resolve().parents[1] / ".cache"
     os.environ.setdefault("HF_HOME", str(cache / "huggingface"))
     os.environ.setdefault("TORCH_HOME", str(cache / "torch"))

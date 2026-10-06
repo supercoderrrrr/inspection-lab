@@ -1,5 +1,19 @@
 # Local validation
 
+## Calibration and evaluation — 2026-10-06
+
+The new normal-only calibration and evaluation workflow was checked using the existing
+Python 3.11 CPU environment. Fifteen tests passed after calibration was added; eighteen
+passed after evaluation was added. Ruff checks passed.
+
+Both methods were fitted on 16 references after holding out the same 30 normal bottle
+images using seed 42. Each saved model was then evaluated on all 83 official test images.
+The checkpoint and threshold were not changed by evaluation. Public predictions and
+calibration files passed hash checks and independent metric recomputation. See
+[the initial comparison](../results/README.md) for results and limits.
+
+## Initial workflow — 2026-10-04
+
 Checked on Windows on 2026-10-04 using Python 3.11.13 and a previously installed CPU runtime
 with PyTorch 2.6.0+cpu and Anomalib 2.2.0.
 

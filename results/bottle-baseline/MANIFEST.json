@@ -1,0 +1,10 @@
+{
+  "files": {
+    "calibration.csv": "cd0690a5769c03793a34e2ce8d48a849002c64946ff96a222f284de3c40f06eb",
+    "environment.json": "5b59df1c18fb4630ffe1384d84b542576eb6d510b865df5a8b7689d5a67f8b6d",
+    "metrics.json": "0ad9783bec3a3f41715c3154d639140987c6f836990ddd2c4665cfd1ee84bf63",
+    "model_metadata.json": "fbd32a696483017d1b9dee394fbacf591ef5cd3dd6199a4490a874e82cddc196",
+    "predictions.csv": "d49026fd0d536363093224e2b0ae63746b553447d9d256878d9270646146fe3a",
+    "REPORT.md": "37e5afccaba6e67413545c59a735c180059fac1f856e89634ff36dead72098f0"
+  }
+}

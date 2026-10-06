@@ -1,0 +1,97 @@
+{
+  "schema_version": 2,
+  "method": "patchcore",
+  "category": "bottle",
+  "image_size": 224,
+  "seed": 42,
+  "reference_count": 16,
+  "references": [
+    {
+      "path": "train/good/170.png",
+      "sha256": "f5656d35f7bcfffd99c88b525d62964e60950143fce0c7fee7a76be09448e656"
+    },
+    {
+      "path": "train/good/183.png",
+      "sha256": "dfa04efa0b98ce6a73981b1bc971ee1e3ede3b43741cf6366e785454513dd5c4"
+    },
+    {
+      "path": "train/good/037.png",
+      "sha256": "3575e4f0785d679737e5d870d4ab308be47ea1565c0b4b6c8d76af502f9a080b"
+    },
+    {
+      "path": "train/good/096.png",
+      "sha256": "4fb0a3c26dc80d417473f52c3d6d5c7c410bac411b8e86391b0e23a5b0eec5cb"
+    },
+    {
+      "path": "train/good/134.png",
+      "sha256": "ce3d2d784e15987c508213c87ea538e4dd82639856ce1ffd5701b175143249d4"
+    },
+    {
+      "path": "train/good/009.png",
+      "sha256": "935dd12766cf96bbdeb48ba5801a896cbd7047212f601077d1adef0db9a6ae57"
+    },
+    {
+      "path": "train/good/075.png",
+      "sha256": "1f87cfa2cc3e2152ee3593e2092cc48e23132c4aaea23de20ef4547a2bb612a9"
+    },
+    {
+      "path": "train/good/154.png",
+      "sha256": "240f78d67c686abbbd1e96066a1e4d2d128778431e9088a26ab20807247dd75f"
+    },
+    {
+      "path": "train/good/146.png",
+      "sha256": "227c97eca0417a674392776fd7656d30a52af454835b84fdfb021dcbcdae5ec4"
+    },
+    {
+      "path": "train/good/147.png",
+      "sha256": "effbfa26216c3804c353abf7fa8a15b802612706fc929d6176bef6ce17882652"
+    },
+    {
+      "path": "train/good/004.png",
+      "sha256": "e322ab1ce2714be77610b25209d5ce91df9ef3f434403cf3dc5041f469d2ade3"
+    },
+    {
+      "path": "train/good/106.png",
+      "sha256": "3a2700ef2b72514e52b11af74a2b1e9a8bc22155391e6dd2a45540b91c682e53"
+    },
+    {
+      "path": "train/good/033.png",
+      "sha256": "16e52b8b32fcaa6295840300340287fed67abcaf1d4ee9d8edd5e674e46b17ca"
+    },
+    {
+      "path": "train/good/003.png",
+      "sha256": "83a8754d0215c4512cdba27caa15d478f21e4314ac85efa639d4d31d1a82122d"
+    },
+    {
+      "path": "train/good/029.png",
+      "sha256": "b8253d5c07aaf8c58f8d0d4a1884ea4e7e7f26b8529b27e6b55e9392db97f67f"
+    },
+    {
+      "path": "train/good/180.png",
+      "sha256": "4abbc0205890a0501807ffedcd2525d554ec057c8f57bc9dbb906144b4d5563b"
+    }
+  ],
+  "calibration": {
+    "file": "calibration.csv",
+    "sha256": "e92176a32afe2039de8c4077f16d8c5562321661e7a75c7ba672609a2b0d8173",
+    "count": 30,
+    "alpha": 0.05,
+    "threshold": 13.116098403930664,
+    "rank": 30,
+    "rule": "score > threshold"
+  },
+  "fitted_at": "2026-10-06T06:15:22.686956+00:00",
+  "checkpoint": "model.pt",
+  "checkpoint_sha256": "3c9167639abdea9712aa53c2d07a1e72760f752796596be3c2734af96d6eaee4",
+  "parameters": {
+    "backbone": "resnet18",
+    "layers": [
+      "layer2",
+      "layer3"
+    ],
+    "num_neighbors": 9,
+    "coreset_ratio": 0.01,
+    "memory_bank_patches": 125,
+    "feature_initialization": "imagenet"
+  }
+}

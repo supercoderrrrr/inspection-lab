@@ -25,6 +25,12 @@ def main(argv=None):
     prediction.add_argument("--model", type=Path, required=True)
     prediction.add_argument("--image", type=Path, required=True)
     prediction.add_argument("--output", type=Path, required=True)
+    evaluation = commands.add_parser("evaluate", help="Evaluate a saved calibrated model on the test split")
+    evaluation.add_argument("--model", type=Path, required=True)
+    evaluation.add_argument("--root", type=Path, required=True)
+    evaluation.add_argument("--output", type=Path, required=True)
+    verification = commands.add_parser("verify-results", help="Verify evidence hashes and recompute image metrics")
+    verification.add_argument("--results", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "check-data":
@@ -34,10 +40,18 @@ def main(argv=None):
 
             result = fit(args.root, args.output, args.limit, args.seed, args.size, args.method,
                          args.calibration_count, args.alpha)
-        else:
+        elif args.command == "predict":
             from inspection.workflow import predict
 
             result = predict(args.model, args.image, args.output)
+        elif args.command == "evaluate":
+            from inspection.evaluation import evaluate
+
+            result = evaluate(args.model, args.root, args.output)
+        else:
+            from inspection.evaluation import verify_evaluation
+
+            result = verify_evaluation(args.results)
     except ImportError:
         parser.exit(2, 'Error: Install PatchCore dependencies with pip install -e ".[patchcore]".\n')
     except (OSError, ValueError, RuntimeError) as error:

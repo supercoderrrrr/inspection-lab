@@ -98,6 +98,27 @@ uncalibrated checkpoints can still be loaded and return `decision: null`; calibr
 predictions include the fixed threshold and a Boolean decision. Loading verifies the
 checkpoint and calibration evidence before inference.
 
+## Evaluate the fixed protocol
+
+```bash
+python -m inspection evaluate --model artifacts/baseline --root data/mvtec_ad/bottle --output results/bottle-baseline
+python -m inspection evaluate --model artifacts/patchcore --root data/mvtec_ad/bottle --output results/bottle-patchcore
+python -m inspection verify-results --results results/bottle-patchcore
+```
+
+Evaluation checks the source-image hashes, scores every image in the category's test split
+and exports AUROC, average precision, recall, precision, normal false alarms and confusion
+counts. It never refits the model or chooses a new threshold. Each result directory contains
+per-image predictions, calibration evidence, model metadata, dependency versions and a
+failure report. Verification checks file hashes and recomputes metrics from the predictions
+without requiring the dataset or a checkpoint. Model weights and dataset images stay out
+of the result directory.
+
+The first published comparison uses one product, one seed and 16 fitted references. It is
+an initial experiment; repeated-seed and reference-budget studies will follow separately.
+The [published comparison](results/README.md) includes all incorrect decisions and
+recomputable evidence for both methods.
+
 ## Checks
 
 ```bash
