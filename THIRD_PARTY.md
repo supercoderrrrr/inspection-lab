@@ -21,3 +21,9 @@ The application imports Anomalib's detector and coreset implementation. No upstr
 source is copied into the package. The ResNet-18 configuration is smaller than the paper's
 full benchmark configuration. Pretrained weights resolved through timm retain upstream terms.
 The root MIT license covers project-authored code.
+
+## Interface screenshot
+
+The screenshot in docs/assets contains MVTec AD imagery and annotations. It retains the
+dataset's CC BY-NC-SA 4.0 terms, with attribution beside the image and in docs/assets/README.md.
+The screenshot is a capture of actual model output; display colors are not segmentation labels.

@@ -6,6 +6,12 @@ The command-line workflow validates a category, fits a normal-reference model an
 single-image scores. It includes a standardized pixel-template baseline and Anomalib
 PatchCore with frozen ImageNet-pretrained ResNet-18 features.
 
+![Local inspection interface](docs/assets/inspection.png)
+
+*Dataset imagery: MVTec AD, MVTec Software GmbH, CC BY-NC-SA 4.0.
+Cyan regions are dataset annotations; colored responses come from the model.
+See [screenshot attribution](docs/assets/README.md).*
+
 ## Install
 
 Use Python 3.11. From this directory:
@@ -166,6 +172,21 @@ PatchCore tests use random features and synthetic images to check fitting, map d
 and checkpoint round trips without downloading weights. They are skipped when the optional
 detector dependencies are absent. Real pretrained fitting is checked separately on the
 local bottle dataset; see [validation notes](docs/VALIDATION.md).
+
+Browser checks require Node.js, calibrated models in `artifacts/baseline-calibrated` and
+`artifacts/patchcore-calibrated`, and the bottle dataset. Fit both using 16 references,
+30 calibration images, size 224 and seed 42, then start the app. Set `INSPECTION_DATA_ROOT`
+in both the server and test terminal if data is outside this repository. Install and run:
+
+```bash
+npm install
+npx playwright install chromium
+npm run test:browser
+```
+
+`BASE_URL` can override the default local URL; `BROWSER_CHANNEL=msedge` selects an installed
+Edge browser instead of downloaded Chromium. Browser checks compare downloaded UI scores
+against the public CLI predictions and verify input changes, upload failures and exports.
 
 ## Attribution
 

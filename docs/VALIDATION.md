@@ -1,5 +1,22 @@
 # Local validation
 
+## Local interface — 2026-10-06
+
+The combined suite passed 28 tests with the existing Python 3.11 CPU runtime. Ruff passed.
+The suite includes empty source checkout behavior, image/model changes, upload decoding,
+shared disk/upload inference, visualization invariance and both public evidence bundles.
+
+Headless Edge browser checks passed for dataset selection, real uploads, corrupt uploads,
+model changes, result invalidation and PNG/NumPy/JSON/CSV downloads. Downloaded UI scores,
+decisions and input hashes match the corresponding evaluated CLI predictions. Download
+buttons retain the current result; changing inputs clears it. No segmentation-accuracy
+claim follows from these display checks.
+
+The app was also checked from an independently extracted Git source archive using the same
+CPU environment: 28 tests and Ruff passed, including public hash verification. No dataset,
+checkpoints or development environment is bundled into Git. This checks clean source
+contents; a fresh dependency installation and hosted Linux CI have not been run for this stage.
+
 ## Calibration and evaluation — 2026-10-06
 
 The new normal-only calibration and evaluation workflow was checked using the existing
