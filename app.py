@@ -190,7 +190,13 @@ def render_evaluation():
             import pandas as pd
 
             frame = pd.read_csv(path / "predictions.csv")
-            st.dataframe(frame[frame.is_anomaly != frame.predicted_anomaly], use_container_width=True, hide_index=True)
+            failures = frame.loc[frame.is_anomaly != frame.predicted_anomaly,
+                                 ["path", "label", "score", "predicted_anomaly"]].copy()
+            failures["predicted_anomaly"] = failures["predicted_anomaly"].map(
+                {0: "Within threshold", 1: "Above threshold"})
+            failures = failures.rename(columns={"path": "Image", "label": "Dataset label",
+                                                "score": "Raw score", "predicted_anomaly": "Decision"})
+            st.dataframe(failures, use_container_width=True, hide_index=True)
             st.download_button("Download predictions", (path / "predictions.csv").read_bytes(),
                                f"{method}_predictions.csv", "text/csv", key=f"predictions_{method}", on_click="ignore")
     st.caption("These are saved test-set results. They do not describe the currently inspected image. "
