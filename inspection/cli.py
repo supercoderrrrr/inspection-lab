@@ -19,6 +19,8 @@ def main(argv=None):
     fitting.add_argument("--limit", type=int, default=16)
     fitting.add_argument("--seed", type=int, default=42)
     fitting.add_argument("--size", type=int, default=224)
+    fitting.add_argument("--calibration-count", type=int, default=30)
+    fitting.add_argument("--alpha", type=float, default=0.05, help="Normal false-alarm target for calibration")
     prediction = commands.add_parser("predict", help="Score one image using a saved model")
     prediction.add_argument("--model", type=Path, required=True)
     prediction.add_argument("--image", type=Path, required=True)
@@ -30,7 +32,8 @@ def main(argv=None):
         elif args.command == "fit":
             from inspection.workflow import fit
 
-            result = fit(args.root, args.output, args.limit, args.seed, args.size, args.method)
+            result = fit(args.root, args.output, args.limit, args.seed, args.size, args.method,
+                         args.calibration_count, args.alpha)
         else:
             from inspection.workflow import predict
 

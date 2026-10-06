@@ -45,7 +45,7 @@ def test_defect_response_and_round_trip(references, tmp_path):
 
 def test_fit_predict_exports_and_protects_checkpoint(references, tmp_path):
     model_dir = tmp_path / "model"
-    metadata = fit(references, model_dir, limit=4, size=64)
+    metadata = fit(references, model_dir, limit=4, size=64, calibration_count=0)
     assert all(p["path"].startswith("train/good/") for p in metadata["references"])
     assert len(metadata["references"]) == 4
     image = references / "train/good/000.png"
@@ -55,7 +55,7 @@ def test_fit_predict_exports_and_protects_checkpoint(references, tmp_path):
     assert json.loads((output / "prediction.json").read_text())["raw_anomaly_score"] == result["raw_anomaly_score"]
     assert np.load(output / "anomaly_map.npy", allow_pickle=False).shape == (64, 64)
     with pytest.raises(ValueError, match="must be empty"):
-        fit(references, model_dir, limit=4)
+        fit(references, model_dir, limit=4, calibration_count=0)
     with (model_dir / "model.npz").open("ab") as stream:
         stream.write(b"changed")
     with pytest.raises(ValueError, match="integrity"):

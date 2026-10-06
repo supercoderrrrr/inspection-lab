@@ -50,14 +50,15 @@ python -m inspection fit --method baseline --root data/mvtec_ad/bottle --limit 1
 python -m inspection predict --model artifacts/baseline --image data/mvtec_ad/bottle/test/broken_large/000.png --output artifacts/baseline-prediction
 ```
 
-Fitting reads only `train/good`. References are sampled reproducibly using seed 42 by default.
+Fitting reads only `train/good`. A seed-42 split holds out 30 normal images for calibration,
+then takes 16 references from the remaining pool by default. The two sets cannot share
+image content. Neither test images nor defect annotations enter fitting or calibration.
 The model directory contains a compressed template and metadata with reference/checkpoint
 hashes. Use a new empty output directory for each fit.
 
 Prediction writes `prediction.json` and `anomaly_map.npy`. The image score is the 99th
 percentile of smoothed, standardized RGB residuals. This baseline assumes a similar view
-and alignment. Raw scores are not probabilities; this stage has no calibrated pass/fail
-threshold or benchmark accuracy claim. Generated files are excluded from Git.
+and alignment. Raw scores are not probabilities. Generated files are excluded from Git.
 
 ## Fit PatchCore on CPU
 
@@ -78,8 +79,24 @@ using ImageNet statistics. `--size`, `--limit` and `--seed` can change the fit c
 
 PatchCore exports the same JSON/NumPy interface as the baseline. Its score uses feature
 distances, so the two methods' raw scores must not be compared as if they used the same
-scale. Both fit only normal training images. Threshold calibration, benchmark evaluation
-and a browser interface will follow in later stages.
+scale. Both fit only normal training images. A browser interface will follow in a later stage.
+
+## Calibrated decisions
+
+New fits also write `calibration.csv` with normal-image scores and hashes. The threshold is
+the `ceil((n + 1) * (1 - alpha))`-th ordered score; an image is flagged only when its score is
+strictly greater than the threshold. Defaults are `n = 30` and `alpha = 0.05`, so the cutoff
+is the largest calibration score. Insufficient calibration data is rejected.
+
+This split-conformal rule targets a normal false-alarm rate under exchangeability: future
+normal images must come from the same distribution as calibration images. It does not
+guarantee a 5% false-alarm rate on a particular small test set or under domain shift.
+
+Use `--calibration-count` and `--alpha` to specify the protocol before inspecting test
+results. `--calibration-count 0` retains the earlier raw-score workflow. Existing
+uncalibrated checkpoints can still be loaded and return `decision: null`; calibrated
+predictions include the fixed threshold and a Boolean decision. Loading verifies the
+checkpoint and calibration evidence before inference.
 
 ## Checks
 
