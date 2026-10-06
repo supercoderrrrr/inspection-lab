@@ -156,15 +156,19 @@ def render_inspection(models):
     if label:
         st.caption(f"Dataset label: {label}. Annotations are displayed for reference and never enter inference.")
     downloads = st.columns(3)
-    downloads[0].download_button("Download overlay", png_bytes(overlay), "inspection_overlay.png", "image/png")
-    downloads[1].download_button("Download raw map", map_bytes(anomaly_map), "anomaly_map.npy", "application/octet-stream")
-    downloads[2].download_button("Download result", json.dumps(result, indent=2), "inspection.json", "application/json")
+    downloads[0].download_button("Download overlay", png_bytes(overlay), "inspection_overlay.png", "image/png",
+                                 on_click="ignore")
+    downloads[1].download_button("Download raw map", map_bytes(anomaly_map), "anomaly_map.npy", "application/octet-stream",
+                                 on_click="ignore")
+    downloads[2].download_button("Download result", json.dumps(result, indent=2), "inspection.json", "application/json",
+                                 on_click="ignore")
 
 
 def render_evaluation():
     st.subheader("Initial bottle comparison")
     st.caption("One seed · 16 fitting references · 30 normal calibration images · 83 test images")
     rows = []
+    evidence = []
     for method in ["baseline", "patchcore"]:
         path = ROOT / "results" / f"bottle-{method}"
         if not path.is_dir():
@@ -176,17 +180,19 @@ def render_evaluation():
                          "Defect recall": f"{metrics['recall']:.1%}",
                          "Normal false alarms": f"{metrics['fp']}/{metrics['tn'] + metrics['fp']}",
                          "Missed defects": metrics["fn"]})
-            with st.expander(f"{method}: predictions and failures"):
-                import pandas as pd
-
-                frame = pd.read_csv(path / "predictions.csv")
-                st.dataframe(frame[frame.is_anomaly != frame.predicted_anomaly], use_container_width=True, hide_index=True)
-                st.download_button("Download predictions", (path / "predictions.csv").read_bytes(),
-                                   f"{method}_predictions.csv", "text/csv", key=f"predictions_{method}")
+            evidence.append((method, path))
         except (OSError, ValueError) as error:
             st.error(f"Saved {method} evidence could not be verified: {error}")
     if rows:
         st.dataframe(rows, use_container_width=True, hide_index=True)
+    for method, path in evidence:
+        with st.expander(f"{method}: predictions and failures"):
+            import pandas as pd
+
+            frame = pd.read_csv(path / "predictions.csv")
+            st.dataframe(frame[frame.is_anomaly != frame.predicted_anomaly], use_container_width=True, hide_index=True)
+            st.download_button("Download predictions", (path / "predictions.csv").read_bytes(),
+                               f"{method}_predictions.csv", "text/csv", key=f"predictions_{method}", on_click="ignore")
     st.caption("These are saved test-set results. They do not describe the currently inspected image. "
                "One normal false alarm changes the observed rate by five percentage points.")
 

@@ -40,6 +40,15 @@ def test_switching_models_clears_previous_decision(tmp_path, monkeypatch):
     app.button[0].click().run(timeout=20)
     assert not app.exception
     assert any(metric.label == "Raw anomaly score" for metric in app.metric)
+    other = root / "test/good/001.png"
+    Image.new("RGB", (64, 64), (95, 95, 95)).save(other)
+    app.run(timeout=20)
+    example = next(box for box in app.selectbox if box.label == "Example")
+    example.set_value(other).run(timeout=20)
+    assert not app.exception
+    assert not app.metric
+    app.button[0].click().run(timeout=20)
+    assert any(metric.label == "Raw anomaly score" for metric in app.metric)
     app.sidebar.selectbox[0].set_value(1).run(timeout=20)
     assert not app.exception
     assert not app.metric
