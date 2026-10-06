@@ -79,7 +79,7 @@ using ImageNet statistics. `--size`, `--limit` and `--seed` can change the fit c
 
 PatchCore exports the same JSON/NumPy interface as the baseline. Its score uses feature
 distances, so the two methods' raw scores must not be compared as if they used the same
-scale. Both fit only normal training images. A browser interface will follow in a later stage.
+scale. Both fit only normal training images.
 
 ## Calibrated decisions
 
@@ -118,6 +118,42 @@ The first published comparison uses one product, one seed and 16 fitted referenc
 an initial experiment; repeated-seed and reference-budget studies will follow separately.
 The [published comparison](results/README.md) includes all incorrect decisions and
 recomputable evidence for both methods.
+
+## Open the local interface
+
+```bash
+python -m pip install -e ".[ui]"
+python -m streamlit run app.py
+```
+
+Open the local URL printed by Streamlit, normally `http://127.0.0.1:8501`. The interface
+discovers saved models under `artifacts/`. Fit a model first using the commands above.
+The default model preference is calibrated PatchCore, selected by method and protocol
+rather than test performance. Legacy uncalibrated models remain usable for raw scores.
+
+Choose a dataset example or upload a PNG/JPEG up to 10 MB and 32 megapixels. The interface
+shows the original image, a response overlay, the score and fixed decision threshold.
+Dataset annotations are shown separately when available and never enter inference.
+Downloads include the overlay, raw NumPy response map and result JSON. Changing the image
+or saved model clears the previous decision. The Evaluation tab shows the independently
+verified public results rather than metrics for the current image.
+
+Heatmap colors use each image's maximum response and weighted opacity to leave low-response
+regions readable. They are not probabilities or validated segmentation masks, and their
+intensity cannot be compared across images. Rendering does not change raw response values.
+
+If the dataset is stored elsewhere, set `INSPECTION_DATA_ROOT` to the parent folder
+containing `bottle/`. `INSPECTION_MODEL_ROOT` can similarly point to another directory
+containing fitted model folders. For example, in Windows PowerShell:
+
+```powershell
+$env:INSPECTION_DATA_ROOT = "D:\datasets\mvtec_ad"
+python -m streamlit run app.py
+```
+
+Without a local dataset, the interface supports uploads. Without fitted models, it shows
+fitting instructions and still displays the public evaluation. Publishing this repository
+does not host the Streamlit application; others install and run it locally.
 
 ## Checks
 
