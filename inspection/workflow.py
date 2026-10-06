@@ -10,7 +10,9 @@ import numpy as np
 
 from inspection.baseline import PixelTemplate
 from inspection.data import file_digest, normal_references
-from inspection.images import validate_size
+from PIL import Image
+
+from inspection.images import image_digest, validate_size
 from inspection.protocol import anomaly_decision, calibrated_threshold, calibration_rank, split_normal
 
 
@@ -136,7 +138,7 @@ def load_detector(model_dir: Path):
     return model, metadata
 
 
-def inspect_image(model, metadata, image: Path):
+def inspect_image(model, metadata, image, image_name=None, image_sha256=None):
     score, anomaly_map = model.predict(image)
     if not np.isfinite(score) or not np.isfinite(anomaly_map).all():
         raise ValueError("Prediction contains nonfinite values.")
@@ -144,8 +146,8 @@ def inspect_image(model, metadata, image: Path):
     threshold = calibration["threshold"] if calibration else None
     result = {
         "method": metadata["method"],
-        "image": image.name,
-        "image_sha256": file_digest(image),
+        "image": image_name or ("image" if isinstance(image, Image.Image) else Path(image).name),
+        "image_sha256": image_sha256 or (image_digest(image) if isinstance(image, Image.Image) else file_digest(image)),
         "checkpoint_sha256": metadata["checkpoint_sha256"],
         "image_size": model.size,
         "raw_anomaly_score": score,
