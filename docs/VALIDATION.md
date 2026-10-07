@@ -1,58 +1,78 @@
-# Local validation
+# Release validation — 0.4.2
 
-## Local interface — 2026-10-06
+Validated on 2026-10-07 after integrating the preserved complete implementation with
+the staged Git repository. Runtime: Windows, Python 3.11.13, Torch 2.6.0+cpu.
 
-The combined suite passed 28 tests with the existing Python 3.11 CPU runtime. Ruff passed.
-The suite includes empty source checkout behavior, image/model changes, upload decoding,
-shared disk/upload inference, visualization invariance and both public evidence bundles.
-
-Headless Edge browser checks passed for dataset selection, real uploads, corrupt uploads,
-model changes, result invalidation and PNG/NumPy/JSON/CSV downloads. Downloaded UI scores,
-decisions and input hashes match the corresponding evaluated CLI predictions. Download
-buttons retain the current result; changing inputs clears it. No segmentation-accuracy
-claim follows from these display checks.
-
-The app was also checked from an independently extracted Git source archive using the same
-CPU environment: 28 tests and Ruff passed, including public hash verification. No dataset,
-checkpoints or development environment is bundled into Git. This checks clean source
-contents; a fresh dependency installation and hosted Linux CI have not been run for this stage.
-
-## Calibration and evaluation — 2026-10-06
-
-The new normal-only calibration and evaluation workflow was checked using the existing
-Python 3.11 CPU environment. Fifteen tests passed after calibration was added; eighteen
-passed after evaluation was added. Ruff checks passed.
-
-Both methods were fitted on 16 references after holding out the same 30 normal bottle
-images using seed 42. Each saved model was then evaluated on all 83 official test images.
-The checkpoint and threshold were not changed by evaluation. Public predictions and
-calibration files passed hash checks and independent metric recomputation. See
-[the initial comparison](../results/README.md) for results and limits.
-
-## Initial workflow — 2026-10-04
-
-Checked on Windows on 2026-10-04 using Python 3.11.13 and a previously installed CPU runtime
-with PyTorch 2.6.0+cpu and Anomalib 2.2.0.
-
-| Check | Result |
+| Check | Observed result |
 |---|---|
-| Dataset checker on the local MVTec AD bottle category | 209 normal training images, 20 normal test images, 63 defect test images and 63 matching masks |
-| Unit and integration tests | 11 passed |
+| Combined unit/integration and UI state suite | 59 passed, 1 expected skip |
+| Independently extracted source archive | 59 passed, 1 expected skip; Ruff and evidence verification passed |
+| CPU dependency compatibility and wheel build | Passed |
 | Ruff correctness checks | Passed |
-| Pixel-template baseline on 16 normal references | Fit, checkpoint reload and single-image inference passed |
-| ImageNet-pretrained PatchCore on 16 normal references | Fit, checkpoint reload and single-image inference passed; 125 reference patches retained |
+| Public evidence verification | Passed for 18 full runs and both initial method records |
+| Installed model and dataset audit | Passed for both release models and the local PaDiM run |
+| Browser acceptance | Passed for inference, uploads, exports, categories, PaDiM and benchmark tabs |
+| Extracted models with source and no local dataset | Upload UI passed; real batch score and decision matched the recorded bottle example |
+| Release packaging | Archive CRC and per-file SHA-256 checked by the packager |
 
-Both real fitting checks used size 224 and seed 42. Pretrained weights were reused from a
-local cache with network downloads disabled. The smoke inference image was
-`test/broken_large/000.png`; only `train/good` was used for fitting.
+The skip requires `artifacts/bottle_verified`, a historical checkpoint excluded from
+source. Synthetic fitting and checkpoint round trips for both detectors still run offline.
+One deprecation warning comes from the Anomalib coreset API used by the initial adapter.
 
-Tests cover corrupt data, missing/mismatched annotations, training/test content overlap,
-deterministic reference sampling, template response to a synthetic defect, checkpoint
-integrity and PatchCore serialization. Random-feature PatchCore tests exercise the pipeline
-without assessing detection accuracy. Anomalib emits an internal deprecation warning during
-coreset construction; fitting and the checks complete successfully.
+The CI workflow checks Windows and Linux using CPU Torch, without benchmark or pretrained
+downloads. Actual hosted status is on the
+[Actions page](https://github.com/supercoderrrrr/inspection-lab/actions/workflows/ci.yml).
+Browser checks use real local models and datasets and run separately from source-only CI.
+No benchmark training was repeated when assembling this release; historical timestamps,
+configuration and source hashes are retained. Earlier staged checks are in
+[STAGED_VALIDATION.md](STAGED_VALIDATION.md).
 
-This record establishes that the current workflow runs. It is not a held-out accuracy
-evaluation or a fresh-environment installation check. The stage exports uncalibrated raw
-scores and has no pass/fail threshold. Dataset files, caches, fitted models and generated
-predictions stay outside Git history.
+## Earlier workspace validation — display snapshot 0.4.1
+
+Validated locally on Windows after the inspection interface and heatmap display update.
+
+| Check | Observed result |
+|---|---|
+| Working environment unit/integration suite | 31 passed |
+| Extracted source ZIP in the separate CPU environment | 30 passed, 1 expected skip |
+| Ruff correctness checks on extracted source | Passed |
+| Public evidence verification on extracted source | Passed |
+| Browser workflow | Passed, including uploads, category/model changes, display controls and downloads |
+
+The new display test verifies that response weighting reduces low-response tint, preserves
+the strongest response and leaves the raw anomaly map unchanged. Browser checks verify that
+changing the display scale leaves the image score unchanged. These are display checks;
+the update does not establish an improvement in defect localization accuracy.
+
+The source-only skip still concerns the historical checkpoint described below. The CPU
+environment was reused from the 0.4.0 clean installation; the 0.4.1 source ZIP was extracted
+into a new directory. Model fitting and the recorded experiments were not repeated for
+this display update. Hosted GitHub Actions have not yet run.
+
+## Earlier workspace validation — comparison snapshot 0.4.0
+
+Validated locally on Windows with Python 3.11.13.
+
+| Check | Observed result |
+|---|---|
+| Working environment unit/integration suite | 30 passed |
+| Source ZIP extracted to an independent directory, fresh CPU environment | 29 passed, 1 expected skip |
+| CPU dependency compatibility | Passed |
+| Ruff correctness checks | Passed |
+| Public evidence hashes and image-metric recomputation | Passed for 18 published runs |
+| Full local artifact and dataset audit | Passed |
+| Browser workflow | Passed, including PaDiM inference and controlled-comparison tab |
+| Release archive CRC and per-file SHA-256 checks | Passed |
+| Extracted model bundle, real defect image, fresh CPU runtime | Passed; score and decision match the original run |
+
+The skipped test requires a historical local checkpoint deliberately excluded from the
+source release. Synthetic PatchCore and PaDiM fit/serialization tests still run in the fresh
+environment without network downloads. Browser checks include category/model identity,
+upload validation, stale-result invalidation, display-scale score stability and downloads.
+
+These checks verify the supplied implementation and evidence. Linux is configured in the
+GitHub Actions matrix but was not executed on this Windows host. Hosted CI status remains
+pending until the repository is pushed. Full local XML/JSON test logs are retained under
+artifacts/; public image-level evidence is under results/.
+
+The actual extracted source plus model bundle was also checked without any dataset images: the app, public benchmarks and upload mode passed.

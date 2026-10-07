@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.2 — 2026-10-07
+
+- Integrate the complete implementation and recorded studies from the earlier workspace.
+- Add metal-nut inspection, paired seeds, nested budgets and brightness/blur checks.
+- Compare PaDiM, PatchCore, a fixed 125-patch coreset and the pixel-template baseline.
+- Publish all 18 run records with calibration scores, split hashes and metric verification.
+- Add batch inference, custom product validation, artifact audits and release packaging.
+- Complete the five-tab UI with aligned response/annotation views and controlled comparisons.
+- Distribute two prespecified PatchCore inference models separately from source and data.
+- Add Windows/Linux CPU CI and retain the initial CLI checkpoint format and evidence.
+
+Recorded experiment timestamps identify their original executions. This version packages
+the preserved implementation and evidence; it does not represent newly trained studies.
+
 ## 0.3.0 — 2026-10-06
 
 - Add a local inspection UI backed by the same inference pipeline as the CLI.

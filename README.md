@@ -1,194 +1,172 @@
 # Inspection Lab
 
-Normal-reference visual inspection, starting with a command-line workflow for MVTec AD.
+**Industrial anomaly inspection with normal-only calibration and reproducible comparisons.**
 
-The command-line workflow validates a category, fits a normal-reference model and exports
-single-image scores. It includes a standardized pixel-template baseline and Anomalib
-PatchCore with frozen ImageNet-pretrained ResNet-18 features.
+Train on normal references, calibrate on separate normal images, inspect defects, and audit
+reported metrics. Includes an English local UI and a batch inference command.
 
-![Local inspection interface](docs/assets/inspection.png)
+![Inspection interface](docs/assets/inspection.png)
 
-*Dataset imagery: MVTec AD, MVTec Software GmbH, CC BY-NC-SA 4.0.
-Cyan regions are dataset annotations; colored responses come from the model.
-See [screenshot attribution](docs/assets/README.md).*
+*Dataset imagery: MVTec AD, MVTec Software GmbH, CC BY-NC-SA 4.0. Cyan regions are dataset
+annotations; colored heatmaps are model outputs. See [attribution](THIRD_PARTY.md).*
 
-## Install
+## Inspection display
 
-Use Python 3.11. From this directory:
+The inspection view aligns the input, model response and dataset annotation. By default,
+per-image scaling and response-weighted opacity leave low-response regions close to the
+original image. Fixed calibration scaling and uniform tint remain available. The raw map
+has a numeric color bar and can be downloaded. Display changes never change image scores,
+thresholds or decisions. Benchmark metrics are shown separately under Experiments & failures.
+
+## What is included
+
+- Two products: bottle and metal nut, independently fitted and calibrated.
+- Three methods: Anomalib PatchCore, Anomalib PaDiM, and a pixel-template baseline.
+- Three paired seeds, nested reference budgets, and a fixed 125-patch PatchCore experiment
+  to separate reference budget from final memory-bank capacity.
+- Thirty held-out normal images calibrate each model. Test anomalies never fit thresholds
+  or select the default checkpoint.
+- Bounded uploads, batch prediction, failure review, numeric heatmaps and CSV/JSON downloads.
+- Public predictions, calibration scores, split/source hashes and an evidence verifier.
+
+## Results
+
+![Three-seed comparison](results/comparison.png)
+
+Error bars show sample standard deviation across seeds 42, 123 and 2026. They measure split
+sensitivity on reused test sets, not population confidence. Read the
+[controlled comparison](results/controlled_v4/REPORT.md) for all methods and budgets.
+The original [bottle](results/bottle_cpu_v2/REPORT.md) and
+[metal-nut](results/metal_nut_cpu_v3/REPORT.md) studies also include dim/blur stress tests.
+
+Original largest-budget PatchCore means:
+
+| Category | References | Image AUROC | Recall | Normal false alarms |
+|---|---:|---:|---:|---:|
+| Bottle | 179 | 1.0000 | 100.0% | 13.3% |
+| Metal nut | 190 | 0.9891 | 92.5% | 4.5% |
+
+AUROC measures ranking; recall and false alarms use the normal-calibrated threshold.
+Only 20/22 normal test images are available. Results do not establish factory readiness.
+
+## Install: CPU first
+
+Use **Python 3.11**. From the repository root:
 
 ```bash
 python -m venv .venv
 ```
 
 Activate with `.venv\Scripts\Activate.ps1` in Windows PowerShell, or
-`source .venv/bin/activate` on Linux, then install:
+`source .venv/bin/activate` on Linux. Then:
 
 ```bash
+python -m pip install --upgrade pip
+python -m pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
 python -m pip install -e ".[dev]"
+python -m pytest -q
+python -m inspection.evidence
 ```
 
-## Check a dataset
+The optional real-checkpoint test skips in a fresh checkout. Other tests need no benchmark
+or pretrained-weight downloads. Windows CPU installation was tested locally. The included
+Windows/Linux GitHub Actions workflow checks each push and pull request.
+See [reproducibility](docs/REPRODUCIBILITY.md).
 
-Download the bottle category from the [official MVTec AD page](https://www.mvtec.com/research-teaching/datasets/mvtec-ad/downloads).
-Dataset files are excluded from Git. Extract them into this structure:
+For NVIDIA CUDA 12.4, replace the CPU index with `https://download.pytorch.org/whl/cu124`.
+
+## Run
+
+```bash
+python -m streamlit run app.py --server.address 127.0.0.1
+```
+
+Open http://127.0.0.1:8501. Without checkpoints, the app displays published evidence.
+For interactive inference, download `inspection-lab-models-v0.4.2.zip` from the
+[v0.4.2 release](https://github.com/supercoderrrrr/inspection-lab/releases/tag/v0.4.2),
+check its SHA-256 against `SHA256SUMS.txt`, and extract it into the repository root.
+Then select **Upload image**. The bundle contains two
+prespecified seed42 models and metadata, with no dataset images.
+
+Alternatively, train locally:
+
+```bash
+python -m inspection.data --category bottle
+python -m inspection.experiment --category bottle --device cpu --robustness --name bottle_local
+```
+
+For dataset examples, run the download command even when using the model bundle. Initial
+training downloads pretrained weights; saved checkpoints support offline inference.
+Restart Streamlit after code changes. `Launch.cmd` is a Windows shortcut.
+
+For data stored elsewhere, set `INSPECTION_DATA_ROOT` to the parent containing `bottle/`
+and `metal_nut/`. `INSPECTION_MODEL_ROOT` can override the `artifacts/` directory.
+Uploads accept PNG/JPEG up to 10 MB and 20 megapixels. GitHub stores the project;
+the Streamlit application runs locally on each user's machine.
+
+The earlier `python -m inspection fit`, `predict`, `evaluate` and `verify-results`
+commands remain available for the initial `metadata.json` checkpoint format.
+The complete study runner and UI use sealed experiment directories (`config.json`,
+`n<budget>/model.pt`). Refit using `inspection.experiment` or use the release bundle
+to inspect interactively; the two checkpoint formats are not interchangeable.
+
+## Reproduce studies
+
+```bash
+python -m inspection.data --category bottle
+python -m inspection.data --category metal_nut
+python -m inspection.study --name bottle_cpu_v2 --device cpu
+python -m inspection.study --category metal_nut --name metal_nut_cpu_v3 --device cpu
+python -m inspection.research --name controlled_v4
+python -m inspection.doctor --verify-data
+```
+
+Plans are saved before execution; completed runs are checked before reuse. Incomplete runs
+are preserved. The controlled study verifies identical split hashes. It is an exploratory
+follow-up to the original studies, not a preregistered external validation study.
+
+These full studies were implemented and run in the earlier project workspace before
+the staged Git repository was assembled. Experiment timestamps and source hashes
+remain unchanged. The [initial comparison](docs/INITIAL_COMPARISON.md) and its evidence
+are also retained. See [staged validation](docs/STAGED_VALIDATION.md) for earlier checks.
+
+## Batch inference and custom products
+
+```bash
+python -m inspection.predict --checkpoint artifacts/bottle_demo_v4/n179/model.pt --input my-images --output artifacts/batch_001 --overlays
+```
+
+Invalid images are reported individually. See [custom data](docs/CUSTOM_DATA.md) for
+training on another product and annotation requirements.
+
+## Architecture
 
 ```text
-data/mvtec_ad/bottle/
-  train/good/*.png
-  test/good/*.png
-  test/<defect>/*.png
-  ground_truth/<defect>/*_mask.png
+Normal images -> disjoint fitting/calibration split -> nested budgets
+              -> PatchCore / PaDiM / pixel template -> calibrated threshold
+              -> untouched test evaluation -> CSVs + hashes -> public evidence
+
+File or upload -> bounded decoder -> saved detector -> score + map -> UI / batch output
 ```
 
-```bash
-python -m inspection check-data --root data/mvtec_ad/bottle
-python -m pytest -q
-```
+| Module | Responsibility |
+|---|---|
+| protocol.py | Splitting, calibration and image metrics |
+| model.py, baseline.py | Detector adapters and simple comparator |
+| experiment.py, study.py, research.py | Individual runs and controlled experiments |
+| doctor.py, evidence.py | Local artifact and public evidence verification |
+| predict.py, app.py | Batch and interactive inference |
+| release.py | Public evidence, source archive and model bundle |
 
-`--root` can also point to an existing dataset outside this repository. The checker returns
-JSON counts and image dimensions; invalid layouts return an error and a nonzero exit code.
-It does not download data or modify the dataset.
+## Scope and provenance
 
-## Fit the baseline
+PatchCore and PaDiM are imported from Anomalib. Project-specific work covers evaluation,
+paired comparisons, fixed-capacity experiments, audits, reporting and the UI. Development
+is AI-assisted. No claim is made to have invented the upstream algorithms.
 
-```bash
-python -m inspection fit --method baseline --root data/mvtec_ad/bottle --limit 16 --output artifacts/baseline
-python -m inspection predict --model artifacts/baseline --image data/mvtec_ad/bottle/test/broken_large/000.png --output artifacts/baseline-prediction
-```
+The root MIT license covers project-authored code. Dependencies, weights and MVTec-derived
+images retain separate terms. See [THIRD_PARTY.md](THIRD_PARTY.md),
+[MODEL_CARD.md](MODEL_CARD.md), [technical report](docs/TECHNICAL_REPORT.md),
+[release notes](docs/RELEASE_NOTES.md) and [contributing](CONTRIBUTING.md).
 
-Fitting reads only `train/good`. A seed-42 split holds out 30 normal images for calibration,
-then takes 16 references from the remaining pool by default. The two sets cannot share
-image content. Neither test images nor defect annotations enter fitting or calibration.
-The model directory contains a compressed template and metadata with reference/checkpoint
-hashes. Use a new empty output directory for each fit.
-
-Prediction writes `prediction.json` and `anomaly_map.npy`. The image score is the 99th
-percentile of smoothed, standardized RGB residuals. This baseline assumes a similar view
-and alignment. Raw scores are not probabilities. Generated files are excluded from Git.
-
-## Fit PatchCore on CPU
-
-Install the CPU PyTorch wheels before the optional detector dependencies:
-
-```bash
-python -m pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
-python -m pip install -e ".[patchcore,dev]"
-python -m inspection fit --method patchcore --root data/mvtec_ad/bottle --limit 16 --output artifacts/patchcore
-python -m inspection predict --model artifacts/patchcore --image data/mvtec_ad/bottle/test/broken_large/000.png --output artifacts/patchcore-prediction
-```
-
-The first fit downloads pretrained features into `.cache/`; later prediction loads the
-saved weights without downloading them again. Fitting extracts layers 2 and 3, selects a
-1% coreset of reference patches and retains at least nine patches for nine-neighbor scoring.
-There is no gradient-based fine-tuning. Input images are resized to 224 pixels and normalized
-using ImageNet statistics. `--size`, `--limit` and `--seed` can change the fit configuration.
-
-PatchCore exports the same JSON/NumPy interface as the baseline. Its score uses feature
-distances, so the two methods' raw scores must not be compared as if they used the same
-scale. Both fit only normal training images.
-
-## Calibrated decisions
-
-New fits also write `calibration.csv` with normal-image scores and hashes. The threshold is
-the `ceil((n + 1) * (1 - alpha))`-th ordered score; an image is flagged only when its score is
-strictly greater than the threshold. Defaults are `n = 30` and `alpha = 0.05`, so the cutoff
-is the largest calibration score. Insufficient calibration data is rejected.
-
-This split-conformal rule targets a normal false-alarm rate under exchangeability: future
-normal images must come from the same distribution as calibration images. It does not
-guarantee a 5% false-alarm rate on a particular small test set or under domain shift.
-
-Use `--calibration-count` and `--alpha` to specify the protocol before inspecting test
-results. `--calibration-count 0` retains the earlier raw-score workflow. Existing
-uncalibrated checkpoints can still be loaded and return `decision: null`; calibrated
-predictions include the fixed threshold and a Boolean decision. Loading verifies the
-checkpoint and calibration evidence before inference.
-
-## Evaluate the fixed protocol
-
-```bash
-python -m inspection evaluate --model artifacts/baseline --root data/mvtec_ad/bottle --output results/bottle-baseline
-python -m inspection evaluate --model artifacts/patchcore --root data/mvtec_ad/bottle --output results/bottle-patchcore
-python -m inspection verify-results --results results/bottle-patchcore
-```
-
-Evaluation checks the source-image hashes, scores every image in the category's test split
-and exports AUROC, average precision, recall, precision, normal false alarms and confusion
-counts. It never refits the model or chooses a new threshold. Each result directory contains
-per-image predictions, calibration evidence, model metadata, dependency versions and a
-failure report. Verification checks file hashes and recomputes metrics from the predictions
-without requiring the dataset or a checkpoint. Model weights and dataset images stay out
-of the result directory.
-
-The first published comparison uses one product, one seed and 16 fitted references. It is
-an initial experiment; repeated-seed and reference-budget studies will follow separately.
-The [published comparison](results/README.md) includes all incorrect decisions and
-recomputable evidence for both methods.
-
-## Open the local interface
-
-```bash
-python -m pip install -e ".[ui]"
-python -m streamlit run app.py
-```
-
-Open the local URL printed by Streamlit, normally `http://127.0.0.1:8501`. The interface
-discovers saved models under `artifacts/`. Fit a model first using the commands above.
-The default model preference is calibrated PatchCore, selected by method and protocol
-rather than test performance. Legacy uncalibrated models remain usable for raw scores.
-
-Choose a dataset example or upload a PNG/JPEG up to 10 MB and 32 megapixels. The interface
-shows the original image, a response overlay, the score and fixed decision threshold.
-Dataset annotations are shown separately when available and never enter inference.
-Downloads include the overlay, raw NumPy response map and result JSON. Changing the image
-or saved model clears the previous decision. The Evaluation tab shows the independently
-verified public results rather than metrics for the current image.
-
-Heatmap colors use each image's maximum response and weighted opacity to leave low-response
-regions readable. They are not probabilities or validated segmentation masks, and their
-intensity cannot be compared across images. Rendering does not change raw response values.
-
-If the dataset is stored elsewhere, set `INSPECTION_DATA_ROOT` to the parent folder
-containing `bottle/`. `INSPECTION_MODEL_ROOT` can similarly point to another directory
-containing fitted model folders. For example, in Windows PowerShell:
-
-```powershell
-$env:INSPECTION_DATA_ROOT = "D:\datasets\mvtec_ad"
-python -m streamlit run app.py
-```
-
-Without a local dataset, the interface supports uploads. Without fitted models, it shows
-fitting instructions and still displays the public evaluation. Publishing this repository
-does not host the Streamlit application; others install and run it locally.
-
-## Checks
-
-```bash
-python -m pytest -q
-python -m ruff check .
-```
-
-PatchCore tests use random features and synthetic images to check fitting, map dimensions
-and checkpoint round trips without downloading weights. They are skipped when the optional
-detector dependencies are absent. Real pretrained fitting is checked separately on the
-local bottle dataset; see [validation notes](docs/VALIDATION.md).
-
-Browser checks require Node.js, calibrated models in `artifacts/baseline-calibrated` and
-`artifacts/patchcore-calibrated`, and the bottle dataset. Fit both using 16 references,
-30 calibration images, size 224 and seed 42, then start the app. Set `INSPECTION_DATA_ROOT`
-in both the server and test terminal if data is outside this repository. Install and run:
-
-```bash
-npm install
-npx playwright install chromium
-npm run test:browser
-```
-
-`BASE_URL` can override the default local URL; `BROWSER_CHANNEL=msedge` selects an installed
-Edge browser instead of downloaded Chromium. Browser checks compare downloaded UI scores
-against the public CLI predictions and verify input changes, upload failures and exports.
-
-## Attribution
-
-Project code is MIT licensed. MVTec AD has separate dataset terms; see
-[THIRD_PARTY.md](THIRD_PARTY.md). Development is AI-assisted.
+See the [release validation record](docs/VALIDATION.md) and [GitHub publishing guide](docs/PUBLISHING.md).
