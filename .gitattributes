@@ -3,6 +3,9 @@
 *.md text eol=lf
 *.toml text eol=lf
 *.json text eol=lf
+*.cjs text eol=lf
+*.yml text eol=lf
+*.ini text eol=lf
 *.png binary
 # Keep hashed experiment evidence identical across platforms.
 results/** -text whitespace=cr-at-eol

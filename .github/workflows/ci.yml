@@ -1,0 +1,47 @@
+name: CPU checks
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    env:
+      HF_HUB_OFFLINE: "1"
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install CPU runtime
+        run: python -m pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+      - name: Install project and test tools
+        run: python -m pip install -e ".[dev]"
+      - name: Check dependency compatibility
+        run: python -m pip check
+      - name: Check Python correctness
+        run: python -m ruff check .
+      - name: Run tests without benchmark downloads
+        run: python -m pytest -q --junitxml=test-results.xml
+      - name: Verify published experiment evidence
+        run: python -m inspection.evidence
+      - name: Verify initial comparison evidence
+        run: |
+          python -m inspection verify-results --results results/bottle-baseline
+          python -m inspection verify-results --results results/bottle-patchcore
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tests-${{ matrix.os }}
+          path: test-results.xml

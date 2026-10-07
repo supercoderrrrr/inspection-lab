@@ -16,5 +16,6 @@ dist/
 .codex/
 AGENTS.md
 node_modules/
+test-results.xml
 Thumbs.db
 .DS_Store

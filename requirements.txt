@@ -1,0 +1,13 @@
+anomalib==2.2.0
+torch==2.6.0
+torchvision==0.21.0
+numpy==2.2.6
+pandas==2.2.3
+scikit-learn==1.6.1
+scipy==1.17.1
+Pillow==11.2.1
+streamlit==1.45.1
+plotly==6.1.2
+pytest==8.3.5
+timm==1.0.30
+matplotlib==3.11.2
