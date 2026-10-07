@@ -1,0 +1,6 @@
+{
+  "sha256": "b9dfad6f9b3aeeb25cb7d2ac3331fc5acd98c7e6858f19c546d35acd2b069773",
+  "backbone": "resnet18",
+  "budget": 190,
+  "threshold": 31.905546188354492
+}

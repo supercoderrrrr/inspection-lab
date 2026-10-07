@@ -1,0 +1,17 @@
+{
+  "runs": [
+    "controlled_v4_bottle_padim_seed42",
+    "controlled_v4_bottle_fixed125_seed42",
+    "controlled_v4_bottle_padim_seed123",
+    "controlled_v4_bottle_fixed125_seed123",
+    "controlled_v4_bottle_padim_seed2026",
+    "controlled_v4_bottle_fixed125_seed2026",
+    "controlled_v4_metal_nut_padim_seed42",
+    "controlled_v4_metal_nut_fixed125_seed42",
+    "controlled_v4_metal_nut_padim_seed123",
+    "controlled_v4_metal_nut_fixed125_seed123",
+    "controlled_v4_metal_nut_padim_seed2026",
+    "controlled_v4_metal_nut_fixed125_seed2026"
+  ],
+  "completed_utc": "2026-09-30T08:15:19.887417+00:00"
+}

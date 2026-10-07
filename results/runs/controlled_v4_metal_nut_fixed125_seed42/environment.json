@@ -1,0 +1,32 @@
+{
+  "python": "3.11.13",
+  "versions": {
+    "torch": "2.6.0+cu124",
+    "torchvision": "0.21.0+cu124",
+    "anomalib": "2.2.0",
+    "timm": "1.0.30",
+    "numpy": "2.2.6"
+  },
+  "gpu": null,
+  "created_utc": "2026-09-30T08:09:38.520502+00:00",
+  "source_hashes": {
+    "inspection\\artifacts.py": "83f613af682885931370a1875027d5ea2279539f0e0e54d3740bbe347ed4c5f2",
+    "inspection\\baseline.py": "d091554c7e9f2f241fe58551c22cbccb35fc2552dd1dd9071c4bf5e0440657e8",
+    "inspection\\data.py": "5677636a206d7b44e66f39e9a47714dd5a22243bdfcd18020dd06053cd89baf0",
+    "inspection\\doctor.py": "c3340380c5967d568f977aa7d901894feb8b8393cd065480d4495e28ca912261",
+    "inspection\\evidence.py": "6c950ef74e505057ad3a79f30c1c0ccbfc8eeebae74cc9da8d686510a738dfc8",
+    "inspection\\experiment.py": "039c116b5e34b09b875430a6f94950f0af34fde426ea73094df1d59c98270d50",
+    "inspection\\export.py": "01c27577007991940ce088a73b044032bd90e5ce287037ae903268d3e3077434",
+    "inspection\\images.py": "84280233abba20c4b9ead66d20f3d46fe9f0a6bb47ab4a39cfb25e11b4b7f536",
+    "inspection\\model.py": "4c794da8207f8631fbec083801ed8034c711249eb656aecfbcd783cced487dfb",
+    "inspection\\paths.py": "5d2de58a9468a111bba2a97b2114fcdb5ec122d418e7e32f458c0ca4b921ef0a",
+    "inspection\\portfolio.py": "86fcc5327065651b6c378213cd740452c61e218852769680dae2970653064677",
+    "inspection\\predict.py": "e6085202b18e3f31e89928840a4cd9186df260dd34d538550d1831e42675a1ff",
+    "inspection\\protocol.py": "9a37241316bd2e5789cced7bf1b7a61ec56481261aedf21eeb6a988b8025bd42",
+    "inspection\\release.py": "3643c504860f749bef90f5cb2c9938c0f0b2d6272bdb5be3516dc183b7eb07ab",
+    "inspection\\report.py": "b31958282feac26fdcbe5e391060fc7bddb6ab4a640cc73817f96cea3b5a4ff8",
+    "inspection\\research.py": "6ee36b1856e0b817e9699b60f1ccc90761e0e9b5fec0a08037376f24f2aeb788",
+    "inspection\\study.py": "3f613d5a4b34e5ace0904aaa3781f616b3be4fa7e811fd9cc8ddfadcc84f2ae8",
+    "inspection\\__init__.py": "c8f889943395451130ef48568089ef08d5169bc3069f94b2cff261b54cfbb3f8"
+  }
+}

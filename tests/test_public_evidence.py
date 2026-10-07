@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from inspection.evaluation import verify_evaluation
+from inspection.evidence import verify_evidence
 
 
 @pytest.mark.parametrize("method", ["baseline", "patchcore"])
@@ -12,3 +13,9 @@ def test_published_initial_comparison_is_recomputable(method):
     assert result["verified"] is True
     assert result["images"] == 83
     assert sum(result["metrics"][name] for name in ["tn", "fp", "fn", "tp"]) == 83
+
+
+def test_complete_published_studies_are_recomputable():
+    root = Path(__file__).resolve().parents[1] / "results"
+    assert len(list((root / "runs").iterdir())) == 18
+    assert verify_evidence(root) == []

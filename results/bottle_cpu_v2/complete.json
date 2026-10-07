@@ -1,0 +1,10 @@
+{
+  "runs": [
+    "bottle_cpu_v2_seed42",
+    "bottle_cpu_v2_seed123",
+    "bottle_cpu_v2_seed2026"
+  ],
+  "completed_utc": "2026-09-30T07:27:07.010971+00:00",
+  "source_sha256": "2ce2faafdad1fb8e0d2caa4f432d2092ed8ddab471a93ea6b986de8f57368e7d",
+  "default_run": "bottle_cpu_v2_seed42"
+}

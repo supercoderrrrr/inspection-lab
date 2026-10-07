@@ -1,0 +1,20 @@
+{
+  "image_auroc": 0.9960899315738025,
+  "average_precision": 0.9991483019269669,
+  "precision": 1.0,
+  "recall": 0.8602150537634409,
+  "false_positive_rate": 0.0,
+  "tn": 22,
+  "fp": 0,
+  "fn": 13,
+  "tp": 80,
+  "budget": 190,
+  "condition": "blur",
+  "threshold": 15.025716781616211,
+  "pixel_auroc": 0.9808803832027335,
+  "latency_median_ms": 63.50860000020475,
+  "latency_p95_ms": 72.22284999807016,
+  "fit_seconds": 48.96313379999992,
+  "memory_patches": 1489,
+  "test_images": 115
+}

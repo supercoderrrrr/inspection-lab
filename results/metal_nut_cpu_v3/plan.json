@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "seeds": [
+    42,
+    123,
+    2026
+  ],
+  "budgets": [
+    16,
+    64,
+    190
+  ],
+  "device": "cpu",
+  "category": "metal_nut",
+  "calibration_count": 30,
+  "alpha": 0.05,
+  "default_seed": 42,
+  "default_budget": 190,
+  "baseline": {
+    "std_floor": 0.05,
+    "blur_sigma": 2,
+    "score_quantile": 0.99
+  },
+  "selection": "First prespecified seed and largest budget; not selected by test metrics."
+}

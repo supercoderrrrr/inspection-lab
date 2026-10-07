@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "seeds": [
+    42,
+    123,
+    2026
+  ],
+  "budgets": [
+    16,
+    64,
+    179
+  ],
+  "device": "cpu",
+  "category": "bottle",
+  "calibration_count": 30,
+  "alpha": 0.05,
+  "default_seed": 42,
+  "default_budget": 179,
+  "baseline": {
+    "std_floor": 0.05,
+    "blur_sigma": 2,
+    "score_quantile": 0.99
+  },
+  "selection": "First prespecified seed and largest budget; not selected by test metrics."
+}

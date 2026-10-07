@@ -1,0 +1,20 @@
+{
+  "schema_version": 3,
+  "method": "patchcore",
+  "bank_patches": 125,
+  "category": "metal_nut",
+  "backbone": "resnet18",
+  "image_size": 224,
+  "seed": 2026,
+  "budgets": [
+    16,
+    64,
+    190
+  ],
+  "coreset_ratio": 0.01,
+  "calibration_count": 30,
+  "alpha": 0.05,
+  "device": "cpu",
+  "batch_size": 8,
+  "robustness": false
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "category": "metal_nut",
+  "backbone": "resnet18",
+  "image_size": 224,
+  "seed": 42,
+  "budgets": [
+    16,
+    64,
+    190
+  ],
+  "coreset_ratio": 0.01,
+  "calibration_count": 30,
+  "alpha": 0.05,
+  "device": "cpu",
+  "batch_size": 8,
+  "robustness": true
+}

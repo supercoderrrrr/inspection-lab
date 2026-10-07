@@ -1,0 +1,29 @@
+{
+  "categories": {
+    "bottle": "bottle_cpu_v2",
+    "metal_nut": "metal_nut_cpu_v3"
+  },
+  "seeds": [
+    42,
+    123,
+    2026
+  ],
+  "budgets": "16,64,all",
+  "fixed_bank_patches": 125,
+  "methods": [
+    "PaDiM",
+    "PatchCore fixed 125"
+  ],
+  "device": "cpu",
+  "padim_features": 100,
+  "padim_layers": [
+    "layer1",
+    "layer2",
+    "layer3"
+  ],
+  "alpha": 0.05,
+  "calibration_count": 30,
+  "image_size": 224,
+  "scope": "Clean images; identical splits to prior studies. No tuning against test labels.",
+  "selection": "125 equals the smallest prior 1% bank; selected before new results."
+}

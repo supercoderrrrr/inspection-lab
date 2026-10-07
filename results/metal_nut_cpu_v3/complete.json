@@ -1,0 +1,10 @@
+{
+  "runs": [
+    "metal_nut_cpu_v3_seed42",
+    "metal_nut_cpu_v3_seed123",
+    "metal_nut_cpu_v3_seed2026"
+  ],
+  "completed_utc": "2026-09-30T07:45:30.885685+00:00",
+  "source_sha256": "3f613d5a4b34e5ace0904aaa3781f616b3be4fa7e811fd9cc8ddfadcc84f2ae8",
+  "default_run": "metal_nut_cpu_v3_seed42"
+}

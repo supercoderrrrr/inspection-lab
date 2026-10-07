@@ -1,0 +1,27 @@
+{
+  "python": "3.11.13",
+  "versions": {
+    "torch": "2.6.0+cu124",
+    "torchvision": "0.21.0+cu124",
+    "anomalib": "2.2.0",
+    "timm": "1.0.30",
+    "numpy": "2.2.6"
+  },
+  "gpu": null,
+  "created_utc": "2026-09-30T07:42:27.469866+00:00",
+  "source_hashes": {
+    "inspection\\artifacts.py": "83f613af682885931370a1875027d5ea2279539f0e0e54d3740bbe347ed4c5f2",
+    "inspection\\baseline.py": "d091554c7e9f2f241fe58551c22cbccb35fc2552dd1dd9071c4bf5e0440657e8",
+    "inspection\\data.py": "ec04c105bf0719cb0175a5102bb850d3cbd354a0c1f153c63c3a5a253db7c01d",
+    "inspection\\doctor.py": "c0118460f299262974ca5012b8d0c7dbe15f1fc9a15e5a36b093006241567002",
+    "inspection\\experiment.py": "4ca0a716dda6f2894ed30afb06a0f55c88ece8b3fe38e0dd0e52bd27aef643b9",
+    "inspection\\export.py": "01c27577007991940ce088a73b044032bd90e5ce287037ae903268d3e3077434",
+    "inspection\\images.py": "84280233abba20c4b9ead66d20f3d46fe9f0a6bb47ab4a39cfb25e11b4b7f536",
+    "inspection\\model.py": "06d86fccfb772709a39ffb533d33936635d30312de8e9020724a32c7a0cf5c6f",
+    "inspection\\paths.py": "de73b305c87788812913cc0389fd850d4ed50c2e86f2840f2b21dec9208145aa",
+    "inspection\\protocol.py": "9a37241316bd2e5789cced7bf1b7a61ec56481261aedf21eeb6a988b8025bd42",
+    "inspection\\report.py": "db0feb144d05f9946d7c311fc449731974310f6e1c5392f552651f070bea85a5",
+    "inspection\\study.py": "3f613d5a4b34e5ace0904aaa3781f616b3be4fa7e811fd9cc8ddfadcc84f2ae8",
+    "inspection\\__init__.py": "c8f889943395451130ef48568089ef08d5169bc3069f94b2cff261b54cfbb3f8"
+  }
+}
